@@ -17,23 +17,20 @@ namespace StoreManagement.Data.Infrastructure.Configurations
                 .HasMaxLength(20);
 
             builder
-                .Property(m => m.ProductBrand)
-                .IsRequired();
+                .HasOne(m => m.Brand);
 
             builder
-                .HasOne(m => m.ProductBrand)
+                .HasOne(m => m.Brand)
                 .WithMany()
-                .HasForeignKey(m => m.ProductBrandId);
+                .HasForeignKey(m => m.BrandId);
 
             builder
-                .Property(m => m.ProductCategory)
-                .IsRequired();
+                .HasOne(m => m.Category);
 
             builder
-                .HasOne(m => m.ProductCategory)
+                .HasOne(m => m.Category)
                 .WithMany()
-                .HasForeignKey(m => m.ProductCategoryId);
-
+                .HasForeignKey(m => m.CategoryId);
 
             builder
                 .ToTable("Products");

@@ -13,11 +13,11 @@ namespace StoreManagement.Domain
 
         }
         public string Name { get; set; }
-        public Guid ProductCategoryId { get; set; }
-        public Category ProductCategory { get; set; }
+        public Guid CategoryId { get; set; }
+        public Category Category { get; set; }
 
-        public Guid ProductBrandId { get; set; }
-        public Brand ProductBrand { get; set; }
+        public Guid BrandId { get; set; }
+        public Brand Brand { get; set; }
         
     }
 }
