@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using StoreManagement.Application.Exceptions;
 using StoreManagement.Data.Infrastructure.UnitOfWorks;
 using StoreManagement.Domain;
 using System;
@@ -17,6 +18,10 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Guid> Handle(CreateProductQuery request, CancellationToken cancellationToken)
         {
+            var result = await storeUnitOfWork.ProductRepository.SingleOrDefaultAsync(f => f.Name == request.Name);
+            if (result != null)
+                throw new ProductNameDuplicationException();
+
             Product product = new()
             {
                 Name = request.Name

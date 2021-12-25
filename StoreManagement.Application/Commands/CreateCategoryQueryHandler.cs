@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using StoreManagement.Application.Exceptions;
 using StoreManagement.Data.Infrastructure.UnitOfWorks;
 using StoreManagement.Domain;
 using System;
@@ -17,6 +18,10 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Guid> Handle(CreateCategoryQuery request, CancellationToken cancellationToken)
         {
+            var result = await storeUnitOfWork.CategoryRepository.SingleOrDefaultAsync(f => f.Name == request.Name);
+            if (result != null)
+                throw new CategoryNameDuplicationException();
+
             Category category = new()
             {
                 Name = request.Name

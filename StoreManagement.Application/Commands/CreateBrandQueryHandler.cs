@@ -19,7 +19,7 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Guid> Handle(CreateBrandQuery request, CancellationToken cancellationToken)
         {
-            var result = await storeUnitOfWork.BrandRepository.Find(f => f.Name == request.Name);
+            var result = await storeUnitOfWork.BrandRepository.SingleOrDefaultAsync(f => f.Name == request.Name);
             if (result != null)
                 throw new BrandNameDuplicationException();
 
