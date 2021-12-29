@@ -9,42 +9,41 @@ using StoreManagement.Domain;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace StoreManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : Controller
+    public class BrandsController : Controller
     {
         private readonly IMediator mediator;
 
-        public CategoryController(IMediator mediator)
+        public BrandsController(IMediator mediator)
         {
             this.mediator = mediator;
         }
 
         #region Gets
-        [HttpGet(Name = nameof(GetAllCategoriesAsync))]
-        [SwaggerOperation(Summary = "Get All Categories", Description = "Get names of all Categories")]
-        public async Task<List<Category>> GetAllCategoriesAsync()
+        [HttpGet(Name = nameof(GetAllBrandsAsync))]
+        [SwaggerOperation(Summary = "Get All Brands", Description = "Get names of all Brands")]
+        public async Task<ActionResult<List<Brand>>> GetAllBrandsAsync()
         {
-            return await mediator.Send(new GetAllCategoriesQuery());
+            return await mediator.Send(new GetAllBrandsQuery());
         }
         #endregion
 
         #region Post
-        [HttpPost(Name = nameof(PostCategoryAsync))]
-        [SwaggerOperation(Summary = "Post Category", Description = "Post new instance of Category")]
-        public async Task<ActionResult<Guid>> PostCategoryAsync([FromBody] CreateCategory dto)
+        [HttpPost(Name = nameof(PostBrandAsync))]
+        [SwaggerOperation(Summary = "Post Brand", Description = "Post new instance of Brand")]
+        public async Task<ActionResult<Guid>> PostBrandAsync([FromBody] CreateBrand dto)
         {
             try
             {
-                Guid id = await mediator.Send(new CreateCategoryQuery(dto.Name));
+                Guid id = await mediator.Send(new CreateBrandQuery(dto.Name));
                 return Ok(id);
             }
-            catch (CategoryNameDuplicationException)
+            catch(BrandNameDuplicationException)
             {
                 ModelState.AddModelError("Name", "DUPLICATION");
                 return BadRequest(ModelState);
@@ -58,16 +57,16 @@ namespace StoreManagement.API.Controllers
         #endregion
 
         #region Put
-        [HttpPut(Name = nameof(PutCategoryAsync))]
-        [SwaggerOperation(Summary = "Post Category", Description = "Post new instance of Category")]
-        public async Task<ActionResult> PutCategoryAsync([FromBody] UpdateCategory dto)
+        [HttpPut(Name = nameof(PutBrandAsync))]
+        [SwaggerOperation(Summary = "Post Brand", Description = "Post new instance of Brand")]
+        public async Task<ActionResult> PutBrandAsync([FromBody] UpdateBrand dto)
         {
             try
             {
-                await mediator.Send(new UpdateCategoryQuery(dto.Id, dto.Name));
+                await mediator.Send(new UpdateBrandQuery(dto.Id, dto.Name));
                 return Ok();
             }
-            catch (CategoryNotFoundException)
+            catch(BrandNotFoundException)
             {
                 return NotFound();
             }
@@ -80,16 +79,16 @@ namespace StoreManagement.API.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete(Name = nameof(DeleteCategoryAsync))]
-        [SwaggerOperation(Summary = "Delete Category", Description = "Delete new instance of Category")]
-        public async Task<ActionResult> DeleteCategoryAsync([FromBody] DeleteCategory dto)
+        [HttpDelete(Name = nameof(DeleteBrandAsync))]
+        [SwaggerOperation(Summary = "Delete Brand", Description = "Delete new instance of Brand")]
+        public async Task<ActionResult> DeleteBrandAsync([FromBody] DeleteBrand dto)
         {
             try
             {
-                await mediator.Send(new DeleteCategoryQuery(dto.Id));
+                await mediator.Send(new DeleteBrandQuery(dto.Id));
                 return Ok();
             }
-            catch (CategoryNotFoundException)
+            catch (BrandNotFoundException)
             {
                 return NotFound();
             }

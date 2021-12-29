@@ -16,21 +16,26 @@ namespace StoreManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : Controller
+    public class ProductsController : Controller
     {
         private readonly IMediator mediator;
 
-        public ProductController(IMediator mediator)
+        public ProductsController(IMediator mediator)
         {
             this.mediator = mediator;
         }
 
         #region Gets
-        [HttpGet(Name = nameof(GetAllProductsAsync))]
-        [SwaggerOperation(Summary = "Get All Products", Description = "Get names of all Products")]
-        public async Task<List<Product>> GetAllProductsAsync()
+        [HttpGet(Name = nameof(GetProductsPaginationAsync))]
+        [SwaggerOperation(Summary = "Get products by pagination", Description = "Get Products by elementCount and starting from pageIndex offset")]
+        public async Task<ActionResult<ProductPagination>> GetProductsPaginationAsync([FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
         {
-            return await mediator.Send(new GetAllProductsQuery());
+            if (pageIndex == 0)
+            {
+                ModelState.AddModelError("pageSize", "Should be greater than 0");
+                return BadRequest(ModelState);
+            }
+            return await mediator.Send(new GetProductsPaginationQuery(pageIndex, pageSize));
         }
         #endregion
 

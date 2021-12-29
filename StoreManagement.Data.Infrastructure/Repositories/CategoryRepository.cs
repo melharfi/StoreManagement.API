@@ -16,8 +16,6 @@ namespace StoreManagement.Data.Infrastructure.Repositories
 
         }
 
-
-
         private StoreDbContext AppDbContext
         {
             get { return Context as StoreDbContext; }

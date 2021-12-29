@@ -11,6 +11,10 @@ using StoreManagement.Data.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using StoreManagement.Domain;
 using StoreManagement.Application.Queries;
+using Microsoft.AspNetCore.Routing;
+using System.Collections.Generic;
+using Bogus;
+using StoreManagement.API.Extensions;
 
 namespace StoreManagement.API
 {
@@ -26,8 +30,25 @@ namespace StoreManagement.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region LowerCase URLs for frontend convention "lowerCamelCase"
+            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+            #endregion
+
+            #region Enable Cors
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder
+            .WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials())
+            ); // Make sure you call this previous to AddMvc
+            // sometime cors fails in client because of multiple path in launchApplicationSettings
+            //"applicationUrl": "https://localhost:5001;http://localhost:5000"
+            // only keep "applicationUrl": "http://localhost:5000"
+            #endregion
+
             // Register MediatR services
             services.AddMediatR(typeof(Startup));
+            services.AddServices();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -66,6 +87,8 @@ namespace StoreManagement.API
             #region Unit Of Work
             services.AddScoped<IStoreUnitOfWork, StoreUnitOfWork>();
             #endregion
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,9 +101,6 @@ namespace StoreManagement.API
                 // Seed the database.
             }
 
-            //var context = app.ApplicationServices.GetService<StoreDbContext>();
-            //AddTestData(context);
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -92,85 +112,111 @@ namespace StoreManagement.API
 
             app.UseRouting();
 
+            #region Enable Corse
+            // Make sure you call this before calling app.UseMvc() and before auhentication middleware
+            app.UseCors("CorsPolicy");
+            #endregion
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            #region Swagger
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Store Management Swagger Open API Documentation");
+            });
+            #endregion
         }
 
         private void AddTestData(StoreDbContext context)
         {
-            #region Brand Mock
-            var adidasBrand = new Brand
-            {
-                Id = Guid.Parse("07b40f57-34f0-4ada-b7e1-db081e729e8e"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "Adidas"
-            };
-            context.Add(adidasBrand);
+            var codeRecordFaker = new Faker();
 
-            var pumaBrand = new Brand
+            #region Brand Mock
+            for (int i = 0; i < 20; i++)
             {
-                Id = Guid.Parse("bb89f2ed-33d8-4dae-a2e8-6ea8a2f602ea"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "Puma"
-            };
-            context.Add(pumaBrand);
+                context.Add
+                (
+                    new Brand
+                    {
+                        Id = Guid.NewGuid(),
+                        Created = DateTime.UtcNow,
+                        Updated = DateTime.UtcNow,
+                        Name = codeRecordFaker.Company.CompanyName()
+                    }
+                );
+            }
+            context.SaveChanges();
             #endregion
 
             #region Category Mock
-            var pantCategory = new Category
+            for (int i = 0; i < 20; i++)
             {
-                Id = Guid.Parse("08d607ab-397e-48e0-98b2-a3834b97766a"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "Pant"
-            };
-            context.Add(pantCategory);
-
-            var HatCategory = new Category
-            {
-                Id = Guid.Parse("db26d0d4-dff1-499c-bb17-a7cc06ac6933"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "Hat"
-            };
-            context.Add(HatCategory);
+                context.AddRange
+                (
+                    new Category
+                    {
+                        Id = Guid.NewGuid(),
+                        Created = DateTime.UtcNow,
+                        Updated = DateTime.UtcNow,
+                        Name = codeRecordFaker.Commerce.Categories(1)[0]
+                    }
+                );
+            }
+            context.AddRange
+            (
+                new Category
+                {
+                    Id = Guid.Parse("08d607ab-397e-48e0-98b2-a3834b97766a"),
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Name = codeRecordFaker.Commerce.Categories(1)[0]
+                },
+                new Category
+                {
+                    Id = Guid.Parse("db26d0d4-dff1-499c-bb17-a7cc06ac6933"),
+                    Created = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow,
+                    Name = codeRecordFaker.Commerce.Categories(1)[0]
+                }
+            );
+            context.SaveChanges();
             #endregion
 
             #region Product Mock
-            var p1 = new Product
+            for (int i = 0; i < 100; i++)
             {
-                Id = Guid.Parse("08d607ab-397e-48e0-98b2-a3834b97766a"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "Black Hat 01",
-                Brand = pumaBrand,
-                BrandId = pumaBrand.Id,
-                Category = HatCategory,
-                CategoryId = HatCategory.Id
-            };
-            context.Add(p1);
+                List<Brand> brands = context.Brands.ToListAsync().Result;
+                List<Category> categories = context.Categories.ToListAsync().Result;
+                Random random = new Random();
+                int randomBrand = random.Next(0, brands.Count);
+                int randomCategory = random.Next(0, categories.Count);
 
-            var p2 = new Product
-            {
-                Id = Guid.Parse("2d8eefe5-0476-4e7b-8051-059736442023"),
-                Created = DateTime.UtcNow,
-                Updated = DateTime.UtcNow,
-                Name = "US Jeans 01",
-                Brand = adidasBrand,
-                BrandId = adidasBrand.Id,
-                Category = pantCategory,
-                CategoryId = pantCategory.Id
-            };
-            context.Add(p2);
-            #endregion
-
+                context.Add
+                (
+                    new Product
+                    {
+                        Id = Guid.NewGuid(),
+                        Created = DateTime.UtcNow,
+                        Updated = DateTime.UtcNow,
+                        Name = codeRecordFaker.Commerce.ProductName(),
+                        Brand = brands[randomBrand],
+                        BrandId = brands[randomBrand].Id,
+                        Description = codeRecordFaker.Commerce.ProductDescription(),
+                        Price = decimal.Parse(codeRecordFaker.Commerce.Price(10.00M, 5000.00M)),
+                        Category = categories[randomCategory],
+                        CategoryId = categories[randomCategory].Id
+                    }
+                );
+            }
             context.SaveChanges();
+            #endregion
         }
     }
 }

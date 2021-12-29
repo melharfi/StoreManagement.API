@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using StoreManagement.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace StoreManagement.API.Extensions
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddTransient<ProductPagination>();
             return services;
         }
     }

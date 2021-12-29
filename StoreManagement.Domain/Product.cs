@@ -18,6 +18,8 @@ namespace StoreManagement.Domain
 
         public Guid BrandId { get; set; }
         public Brand Brand { get; set; }
-        
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+
     }
 }

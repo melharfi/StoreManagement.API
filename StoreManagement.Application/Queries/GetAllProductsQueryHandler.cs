@@ -17,7 +17,7 @@ namespace StoreManagement.Application.Queries
         }
         public async Task<List<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
         {
-            return (List<Product>)await storeUnitOfWork.ProductRepository.GetAllAsync();
+            return (List<Product>)await storeUnitOfWork.ProductRepository.GetAllWithDetailsAsync();
         }
     }
 }

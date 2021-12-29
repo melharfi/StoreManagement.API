@@ -1,4 +1,5 @@
-﻿using StoreManagement.Data.EF.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using StoreManagement.Data.EF.Infrastructure;
 using StoreManagement.Data.Infrastructure.Models;
 using StoreManagement.Domain;
 using System;
@@ -20,6 +21,26 @@ namespace StoreManagement.Data.Infrastructure.Repositories
         private StoreDbContext AppDbContext
         {
             get { return Context as StoreDbContext; }
+        }
+
+        public async Task<IEnumerable<Product>> GetAllWithDetailsAsync()
+        {
+            return await AppDbContext.Products.
+                Include(f => f.Brand).
+                Include(f => f.Category).
+                ToListAsync();
+        }
+
+        public Task<List<Product>> GetByPaginationAsync(int pageIndex, int pageSize)
+        {
+            return Task.FromResult(AppDbContext.Products
+                .Include(f => f.Category)
+                .Include(f => f.Brand)
+                .AsEnumerable()
+                .OrderBy(f => f.Name)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList());
         }
     }
 }
