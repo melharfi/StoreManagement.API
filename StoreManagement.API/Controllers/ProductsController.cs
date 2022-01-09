@@ -46,7 +46,7 @@ namespace StoreManagement.API.Controllers
         {
             try
             {
-                Guid id = await mediator.Send(new CreateProductQuery(dto.Name));
+                Guid id = await mediator.Send(new CreateProductQuery(dto.Name, dto.BrandId, dto.CategoryId, dto.Description, dto.Price));
                 return Ok(id);
             }
             catch (ProductNameDuplicationException)
@@ -64,12 +64,12 @@ namespace StoreManagement.API.Controllers
 
         #region Put
         [HttpPut(Name = nameof(PutProductAsync))]
-        [SwaggerOperation(Summary = "Post Product", Description = "Post new instance of Product")]
+        [SwaggerOperation(Summary = "Put Product", Description = "Edit a Product using Put verb")]
         public async Task<ActionResult> PutProductAsync([FromBody] UpdateProduct dto)
         {
             try
             {
-                await mediator.Send(new UpdateProductQuery(dto.Id, dto.Name));
+                await mediator.Send(new UpdateProductQuery(dto.Id, dto.Name, dto.BrandId, dto.CategoryId, dto.Description, dto.Price));
                 return Ok();
             }
             catch (ProductNotFoundException)
@@ -86,7 +86,7 @@ namespace StoreManagement.API.Controllers
 
         #region Delete
         [HttpDelete(Name = nameof(DeleteProductAsync))]
-        [SwaggerOperation(Summary = "Delete Product", Description = "Delete new instance of Product")]
+        [SwaggerOperation(Summary = "Delete Product", Description = "Delete Product")]
         public async Task<ActionResult> DeleteProductAsync([FromBody] DeleteProduct dto)
         {
             try
@@ -105,7 +105,5 @@ namespace StoreManagement.API.Controllers
             }
         }
         #endregion
-
-
     }
 }

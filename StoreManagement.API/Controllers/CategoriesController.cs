@@ -26,11 +26,16 @@ namespace StoreManagement.API.Controllers
         }
 
         #region Gets
-        [HttpGet(Name = nameof(GetAllCategoriesAsync))]
-        [SwaggerOperation(Summary = "Get All Categories", Description = "Get names of all Categories")]
-        public async Task<List<Category>> GetAllCategoriesAsync()
+        [HttpGet(Name = nameof(GetCategoriesPaginationAsync))]
+        [SwaggerOperation(Summary = "Get Categories by pagination", Description = "Get Categories by elementCount and starting from pageIndex offset")]
+        public async Task<ActionResult<CategoryPagination>> GetCategoriesPaginationAsync([FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
         {
-            return await mediator.Send(new GetAllCategoriesQuery());
+            if (pageIndex == 0)
+            {
+                ModelState.AddModelError("pageSize", "Should be greater than 0");
+                return BadRequest(ModelState);
+            }
+            return await mediator.Send(new GetCategoriesPaginationQuery(pageIndex, pageSize));
         }
         #endregion
 

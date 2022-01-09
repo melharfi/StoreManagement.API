@@ -1,4 +1,5 @@
-﻿using StoreManagement.Data.EF.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using StoreManagement.Data.EF.Infrastructure;
 using StoreManagement.Data.Infrastructure.Models;
 using StoreManagement.Domain;
 using System;
@@ -19,6 +20,15 @@ namespace StoreManagement.Data.Infrastructure.Repositories
         private StoreDbContext AppDbContext
         {
             get { return Context as StoreDbContext; }
+        }
+
+        public Task<List<Category>> GetByPaginationAsync(int pageIndex, int pageSize)
+        {
+            return Task.FromResult(AppDbContext.Categories
+                .OrderBy(f => f.Name)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToList());
         }
     }
 }

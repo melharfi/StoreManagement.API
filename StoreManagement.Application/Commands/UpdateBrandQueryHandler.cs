@@ -2,6 +2,7 @@
 using StoreManagement.Application.Exceptions;
 using StoreManagement.Data.Infrastructure.UnitOfWorks;
 using StoreManagement.Domain;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,18 +18,16 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Unit> Handle(UpdateBrandQuery request, CancellationToken cancellationToken)
         {
-            #region check if there's already an existing brand with same name to avoid duplication
-            Brand original = await storeUnitOfWork.BrandRepository.GetByIdAsync(request.Id);
-            if (original == null)
+            #region check if object exist
+            Brand brand = await storeUnitOfWork.BrandRepository.GetByIdAsync(request.Id);
+            if (brand == null)
                 throw new CategoryNotFoundException();
             #endregion
 
-            Brand Brand = new()
-            {
-                Name = request.Name
-            };
+            brand.Name = request.Name;
+            brand.Updated = DateTime.UtcNow;
 
-            await storeUnitOfWork.BrandRepository.AddAsync(Brand);
+            storeUnitOfWork.BrandRepository.UpdateAsync(brand);
             await storeUnitOfWork.CommitAsync();
 
             return Unit.Value;

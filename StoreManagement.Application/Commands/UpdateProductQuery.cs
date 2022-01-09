@@ -13,14 +13,17 @@ namespace StoreManagement.Application.Commands
         public Guid Id { get; }
         public string Name { get; }
         public Guid CategoryId { get; set; }
-        public Category Category { get; set; }
-
         public Guid BrandId { get; set; }
-        public Brand Brand { get; set; }
-        public UpdateProductQuery(Guid Id, string Name)
+        public string Description { get; set; }
+        public decimal Price { get; set; }
+        public UpdateProductQuery(Guid id, string name, Guid brandId, Guid categoryId, string description, decimal price)
         {
-            this.Id = Id;
-            this.Name = Name;
+            Id = id;
+            Name = name;
+            BrandId = brandId;
+            CategoryId = categoryId;
+            Description = description;
+            Price = price;
         }
     }
 }

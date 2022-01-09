@@ -12,6 +12,7 @@ namespace StoreManagement.API.Extensions
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddTransient<ProductPagination>();
+            services.AddTransient<CategoryPagination>();
             return services;
         }
     }

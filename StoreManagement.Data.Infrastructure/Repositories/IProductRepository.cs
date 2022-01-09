@@ -9,7 +9,5 @@ namespace StoreManagement.Data.Infrastructure.Repositories
     {
         Task<IEnumerable<Product>> GetAllWithDetailsAsync();
         Task<List<Product>> GetByPaginationAsync(int pageIndex, int elementsPerPage);
-        //Task<Category> GetWithRoomById(Guid id);
-        //TODO maybe add a reservationId in model and a methode to fetch it here
     }
 }

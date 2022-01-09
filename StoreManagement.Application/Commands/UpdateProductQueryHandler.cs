@@ -18,24 +18,34 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Unit> Handle(UpdateProductQuery request, CancellationToken cancellationToken)
         {
-            #region check if there's already an existing brand with same name to avoid duplication
-            Product original = await storeUnitOfWork.ProductRepository.GetByIdAsync(request.Id);
-            if (original == null)
+            #region check if object exist
+            Product product = await storeUnitOfWork.ProductRepository.GetByIdAsync(request.Id);
+            if (product == null)
                 throw new ProductNotFoundException();
             #endregion
 
-            Product product = new()
-            {
-                Name = request.Name,
-                Id = request.Id,
-                Brand = request.Brand,
-                BrandId = request.BrandId,
-                Category = request.Category,
-                CategoryId = request.CategoryId,
-                Updated = DateTime.UtcNow
-            };
+            #region associated Brand
+            Brand assocBrand = await storeUnitOfWork.BrandRepository.GetByIdAsync(request.BrandId);
+            if (assocBrand == null)
+                throw new BrandNotFoundException();
+            #endregion
 
-            await storeUnitOfWork.ProductRepository.AddAsync(product);
+            #region associated Category
+            Category assocCategory = await storeUnitOfWork.CategoryRepository.GetByIdAsync(request.CategoryId);
+            if (assocCategory == null)
+                throw new CategoryNotFoundException();
+            #endregion
+
+            product.Name = request.Name;
+            product.Brand = assocBrand;
+            product.BrandId = assocBrand.Id;
+            product.Category = assocCategory;
+            product.CategoryId = assocCategory.Id;
+            product.Updated = DateTime.UtcNow;
+            product.Description = request.Description;
+            product.Price = request.Price;
+
+            storeUnitOfWork.ProductRepository.UpdateAsync(product);
             await storeUnitOfWork.CommitAsync();
 
             return Unit.Value;

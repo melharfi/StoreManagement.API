@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace StoreManagement.API.DTOs
 {
@@ -7,5 +8,13 @@ namespace StoreManagement.API.DTOs
         [Required]
         [MaxLength(20)]
         public string Name { get; set; }
+
+        [Required]
+        public Guid CategoryId { get; set; }
+        [Required]
+        public Guid BrandId { get; set; }
+        [Required]
+        public string Description { get; set; }
+        public decimal Price { get; set; }
     }
 }

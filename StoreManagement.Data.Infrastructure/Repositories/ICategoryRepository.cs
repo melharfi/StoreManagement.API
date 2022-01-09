@@ -7,8 +7,6 @@ namespace StoreManagement.Data.Infrastructure.Repositories
 {
     public interface ICategoryRepository : IEFGenericRepository<Category>
     {
-        Task<IEnumerable<Category>> GetAllAsync();
-        //Task<Category> GetWithRoomById(Guid id);
-        //TODO maybe add a reservationId in model and a methode to fetch it here
+        Task<List<Category>> GetByPaginationAsync(int pageIndex, int elementsPerPage);
     }
 }

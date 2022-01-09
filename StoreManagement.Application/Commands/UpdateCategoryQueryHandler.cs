@@ -18,18 +18,16 @@ namespace StoreManagement.Application.Commands
         }
         public async Task<Unit> Handle(UpdateCategoryQuery request, CancellationToken cancellationToken)
         {
-            #region check if there's already an existing brand with same name to avoid duplication
-            Category original = await storeUnitOfWork.CategoryRepository.GetByIdAsync(request.Id);
-            if (original == null)
+            #region check if object exist
+            Category category = await storeUnitOfWork.CategoryRepository.GetByIdAsync(request.Id);
+            if (category == null)
                 throw new CategoryNotFoundException();
             #endregion
 
-            Category category = new()
-            {
-                Name = request.Name
-            };
+            category.Name = request.Name;
+            category.Updated = DateTime.UtcNow;
 
-            await storeUnitOfWork.CategoryRepository.AddAsync(category);
+            storeUnitOfWork.CategoryRepository.UpdateAsync(category);
             await storeUnitOfWork.CommitAsync();
 
             return Unit.Value;

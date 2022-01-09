@@ -70,7 +70,7 @@ namespace StoreManagement.API.Controllers
             {
                 return NotFound();
             }
-            catch
+            catch(Exception ex)
             {
                 ModelState.AddModelError("Error", "InternalError");
                 return StatusCode(StatusCodes.Status500InternalServerError);

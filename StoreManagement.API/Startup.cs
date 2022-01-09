@@ -156,7 +156,7 @@ namespace StoreManagement.API
             #endregion
 
             #region Category Mock
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10; i++)
             {
                 context.AddRange
                 (
@@ -169,23 +169,6 @@ namespace StoreManagement.API
                     }
                 );
             }
-            context.AddRange
-            (
-                new Category
-                {
-                    Id = Guid.Parse("08d607ab-397e-48e0-98b2-a3834b97766a"),
-                    Created = DateTime.UtcNow,
-                    Updated = DateTime.UtcNow,
-                    Name = codeRecordFaker.Commerce.Categories(1)[0]
-                },
-                new Category
-                {
-                    Id = Guid.Parse("db26d0d4-dff1-499c-bb17-a7cc06ac6933"),
-                    Created = DateTime.UtcNow,
-                    Updated = DateTime.UtcNow,
-                    Name = codeRecordFaker.Commerce.Categories(1)[0]
-                }
-            );
             context.SaveChanges();
             #endregion
 

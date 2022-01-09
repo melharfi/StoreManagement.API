@@ -8,6 +8,7 @@ namespace StoreManagement.Domain
         {
             Id = new Guid();
             Created = DateTime.UtcNow;
+            Updated = DateTime.UtcNow;
         }
 
         public Guid Id { get; set; }
