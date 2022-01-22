@@ -7,6 +7,7 @@ namespace StoreManagement.API.DTOs
     {
         [Required]
         [MaxLength(20)]
+        [MinLength(3)]
         public string Name { get; set; }
 
         [Required]
@@ -14,6 +15,7 @@ namespace StoreManagement.API.DTOs
         [Required]
         public Guid BrandId { get; set; }
         [Required]
+        [MaxLength(100)]
         public string Description { get; set; }
         public decimal Price { get; set; }
     }

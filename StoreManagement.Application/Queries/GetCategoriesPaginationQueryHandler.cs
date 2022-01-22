@@ -25,8 +25,6 @@ namespace StoreManagement.Application.Queries
 
             List<Category> Categories = await storeUnitOfWork.CategoryRepository.GetByPaginationAsync(request.PageIndex, request.PageSize);
             int collectionSize = storeUnitOfWork.CategoryRepository.GetAllAsync().Result.Count();
-            int pagesCount = collectionSize / request.PageSize;
-            Console.WriteLine(pagesCount);
             CategoryPagination.Categories = Categories;
             CategoryPagination.CollectionSize = collectionSize;
 

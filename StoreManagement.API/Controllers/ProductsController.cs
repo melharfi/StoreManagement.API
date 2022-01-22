@@ -26,9 +26,20 @@ namespace StoreManagement.API.Controllers
         }
 
         #region Gets
-        [HttpGet(Name = nameof(GetProductsPaginationAsync))]
+        [HttpGet("{id}", Name = nameof(GetProductByIdAsync))]
         [SwaggerOperation(Summary = "Get products by pagination", Description = "Get Products by elementCount and starting from pageIndex offset")]
-        public async Task<ActionResult<ProductPagination>> GetProductsPaginationAsync([FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<ProductDetails>> GetProductByIdAsync(Guid id)
+        {
+            ProductDetails readingProduct = await mediator.Send(new GetProductByIdQuery(id));
+            if (readingProduct == null)
+                return NotFound();
+            else
+                return readingProduct;
+        }
+
+        [HttpGet("pagination", Name = nameof(GetProductsPaginationAsync))]
+        [SwaggerOperation(Summary = "Get products by pagination", Description = "Get Products by elementCount and starting from pageIndex offset")]
+        public async Task<ActionResult<ProductPagination>> GetProductsPaginationAsync(int pageIndex = 1, int pageSize = 10)
         {
             if (pageIndex == 0)
             {
@@ -85,13 +96,13 @@ namespace StoreManagement.API.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete(Name = nameof(DeleteProductAsync))]
+        [HttpDelete(("{id}"), Name = nameof(DeleteProductByIdAsync))]
         [SwaggerOperation(Summary = "Delete Product", Description = "Delete Product")]
-        public async Task<ActionResult> DeleteProductAsync([FromBody] DeleteProduct dto)
+        public async Task<ActionResult> DeleteProductByIdAsync(Guid id)
         {
             try
             {
-                await mediator.Send(new DeleteProductQuery(dto.Id));
+                await mediator.Send(new DeleteProductQuery(id));
                 return Ok();
             }
             catch (ProductNotFoundException)

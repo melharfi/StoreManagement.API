@@ -79,13 +79,13 @@ namespace StoreManagement.API.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete(Name = nameof(DeleteBrandAsync))]
-        [SwaggerOperation(Summary = "Delete Brand", Description = "Delete new instance of Brand")]
-        public async Task<ActionResult> DeleteBrandAsync([FromBody] DeleteBrand dto)
+        [HttpDelete("{id}", Name = nameof(DeleteBrandByIdAsync))]
+        [SwaggerOperation(Summary = "Delete Brand", Description = "Delete Brand by Id as GUID")]
+        public async Task<ActionResult> DeleteBrandByIdAsync(Guid id)
         {
             try
             {
-                await mediator.Send(new DeleteBrandQuery(dto.Id));
+                await mediator.Send(new DeleteBrandQuery(id));
                 return Ok();
             }
             catch (BrandNotFoundException)

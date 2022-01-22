@@ -22,12 +22,8 @@ namespace StoreManagement.Application.Queries
         }
         public async Task<ProductPagination> Handle(GetProductsPaginationQuery request, CancellationToken cancellationToken)
         {
-            List<Product> _products = (List<Product>)await storeUnitOfWork.ProductRepository.GetAllAsync();
-
             List<Product> products = await storeUnitOfWork.ProductRepository.GetByPaginationAsync(request.PageIndex, request.PageSize);
             int collectionSize = storeUnitOfWork.ProductRepository.GetAllAsync().Result.Count();
-            int pagesCount = collectionSize / request.PageSize;
-            Console.WriteLine(pagesCount);
             productPagination.Products = products;
             productPagination.CollectionSize = collectionSize;
 

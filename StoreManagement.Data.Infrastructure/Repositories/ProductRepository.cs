@@ -23,6 +23,14 @@ namespace StoreManagement.Data.Infrastructure.Repositories
             get { return Context as StoreDbContext; }
         }
 
+        public async Task<Product> GetWithDetailsAsync(Guid id)
+        {
+            return await AppDbContext.Products.
+                Include(f => f.Brand).
+                Include(f => f.Category).
+                FirstOrDefaultAsync(f => f.Id == id);
+
+        }
         public async Task<IEnumerable<Product>> GetAllWithDetailsAsync()
         {
             return await AppDbContext.Products.

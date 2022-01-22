@@ -85,13 +85,13 @@ namespace StoreManagement.API.Controllers
         #endregion
 
         #region Delete
-        [HttpDelete(Name = nameof(DeleteCategoryAsync))]
-        [SwaggerOperation(Summary = "Delete Category", Description = "Delete new instance of Category")]
-        public async Task<ActionResult> DeleteCategoryAsync([FromBody] DeleteCategory dto)
+        [HttpDelete("{id}", Name = nameof(DeleteCategoryByIdAsync))]
+        [SwaggerOperation(Summary = "Delete Category by Id", Description = "Delete Category by Id as GUID")]
+        public async Task<ActionResult> DeleteCategoryByIdAsync(Guid id)
         {
             try
             {
-                await mediator.Send(new DeleteCategoryQuery(dto.Id));
+                await mediator.Send(new DeleteCategoryQuery(id));
                 return Ok();
             }
             catch (CategoryNotFoundException)
