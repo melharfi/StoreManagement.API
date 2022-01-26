@@ -37,10 +37,11 @@ namespace StoreManagement.API
             #region Enable Cors
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder
             .WithOrigins("http://localhost:4200")
+            .WithOrigins("http://localhost:9800")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials())
-            ); // Make sure you call this previous to AddMvc
+            ); ; // Make sure you call this previous to AddMvc
             // sometime cors fails in client because of multiple path in launchApplicationSettings
             //"applicationUrl": "https://localhost:5001;http://localhost:5000"
             // only keep "applicationUrl": "http://localhost:5000"
