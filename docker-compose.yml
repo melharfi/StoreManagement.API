@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+    frontend:
+        image: melharfi/storemanagementui
+        ports:
+            - "5080:80"
+        networks:
+            shared-network:
+                ipv4_address: 172.16.0.20
+        deploy:
+            mode: replicated
+            replicas: 1
+            resources:
+                limits:
+                  cpus: '0.50'
+                  memory: 50M
+                reservations:
+                  cpus: '0.25'
+                  memory: 20M
+    backend:
+        image: melharfi/storemanagementapi
+        ports:
+            - "6080:80"
+        networks:
+            shared-network:
+                ipv4_address: 172.16.0.21
+        deploy:
+            mode: replicated
+            replicas: 1
+            resources:
+                limits:
+                  cpus: '0.50'
+                  memory: 50M
+                reservations:
+                  cpus: '0.25'
+                  memory: 20M
+networks:
+  shared-network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/24
+          gateway: 172.16.0.1
+        - subnet: 2001:3984:3989::/64
+          gateway: 2001:3984:3989::1

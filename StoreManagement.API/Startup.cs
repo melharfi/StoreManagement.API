@@ -37,7 +37,7 @@ namespace StoreManagement.API
             #region Enable Cors
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder => builder
             .WithOrigins("http://localhost:4200")
-            .WithOrigins("http://localhost:9800")
+            .WithOrigins("http://localhost:5080")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials())
